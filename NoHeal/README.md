@@ -1,6 +1,6 @@
-# Slaughter Prevention
+# No Heal
 
-A very simple mod that prevents Lord Hanshek's Twilight Slaughter from killing pets. That is all.
+A very simple mod that prevents you from healing in combat.
 
 **Please let me know if you have any issues**
 
@@ -19,7 +19,7 @@ A very simple mod that prevents Lord Hanshek's Twilight Slaughter from killing p
 4. Extract the archive into the game folder. Your `Across the Obelisk` folder should now contain a `BepInEx` folder and a `doorstop_libs` folder.
 5. Run the game. If everything runs correctly, you will see this mod in the list of registered mods on the main menu.
 6. Press F5 to open/close the Config Manager and F1 to show/hide mod version information.
-7. Close the game and copy the `MultipleRerolls.dll` into the `Across the Obelisk\BepInEx\plugins` folder
+7. Close the game and copy the `NoHeal.dll` into the `Across the Obelisk\BepInEx\plugins` folder
 8. Run the game again
 9. Press F5 to open the Config Manager and make sure the configs are set as you like them
 

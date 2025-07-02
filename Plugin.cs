@@ -42,7 +42,7 @@ namespace NoHeal
         public static ConfigEntry<bool> EnableMod { get; set; }
         public static ConfigEntry<bool> EnableDebugging { get; set; }
 
-        public static ConfigEntry<bool> OnlyImmortalPurples { get; set; }
+        // public static ConfigEntry<bool> OnlyImmortalPurples { get; set; }
         public static bool EssentialsInstalled = false;
         public static string debugBase = $"{PluginInfo.PLUGIN_GUID} ";
 
@@ -57,7 +57,7 @@ namespace NoHeal
 
             EnableMod = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "EnableMod"), true, new ConfigDescription("Enables the mod. If false, the mod will not work then next time you load the game."));
             EnableDebugging = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "EnableDebugging"), true, new ConfigDescription("Enables the debugging"));
-            OnlyImmortalPurples = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "OnlyImmortalPurples"), false, new ConfigDescription("Makes it so that only purple (corrupted) pets are immortal"));
+            // OnlyImmortalPurples = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "OnlyImmortalPurples"), false, new ConfigDescription("Makes it so that only purple (corrupted) pets are immortal"));
 
             // Log.LogInfo($"{PluginInfo.PLUGIN_GUID} second test (pre-register)");
             // OnlyImmortalPurples.Value = true;
