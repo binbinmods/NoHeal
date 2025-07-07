@@ -66,7 +66,7 @@ namespace NoHeal
             {
                 heal = 1;
             }
-            if (IsCharacterValid(__instance))
+            if (IsCharacterValid(__instance) && !SetHealToOne.Value)
             {
                 LogDebug($"Prevented healing for {__instance.Id} with heal {heal}");
                 return false;
@@ -90,18 +90,18 @@ namespace NoHeal
         [HarmonyPrefix]
         [HarmonyPatch(typeof(AtOManager), nameof(AtOManager.ModifyHeroLife))]
 
-        public static bool ModifyHeroLifePrefix(AtOManager __instance, ref int _flat, ref float _percent, int _heroIndex = -1, )
+        public static bool ModifyHeroLifePrefix(AtOManager __instance, ref int _flat, ref float _percent, int _heroIndex = -1)
         {
             if (DisableOutOfCombatHealing.Value && (_flat > 0 || _percent > 0.0f) && !SetHealToOne.Value)
             {
                 // __result = (SetHealToOne.Value && __result != 0) ? 1 : 0;
                 return false;
             }
-            // if (SetHealToOne.Value && (_flat > 0 || _percent > 0.0f))
-            // {
-            //     _flat = 1;
-            //     _percent = 0.0f;
-            // }
+            if (SetHealToOne.Value && (_flat > 0 || _percent > 0.0f))
+            {
+                _flat = 1;
+                _percent = 0.0f;
+            }
             return true;
         }
 
