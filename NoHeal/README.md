@@ -1,6 +1,10 @@
 # No Heal
 
-A very simple mod that prevents you from healing in combat.
+A very simple mod that prevents you from healing in combat. Yes, that includes _all_ forms of healing, vitality included. Has an option of setting the healing to be 1 instead if you wish to be able to use items that proc on heals. But thats for pansies. Real gamers suffer.
+
+Comes with an option to disable out of combat healing too. This includes from all events, beating bosses, or transitioning to new areas. Essentially, your health will **never** go up, making all damage you take permanent.
+
+If you come across a version of healing that isn't prevented, let me know! I'll fix that :) Same thing for any bugs you find
 
 **Please let me know if you have any issues**
 
@@ -31,7 +35,7 @@ A very simple mod that prevents you from healing in combat.
 
 ## Support
 
-This has been updated for version 1.4.
+This has been updated for version 1.6.0.
 
 Hope you enjoy it and if have any issues, ping me in Discord or make a post in the **modding #support-and-requests** channel of the [official Across the Obelisk Discord](https://discord.gg/across-the-obelisk-679706811108163701).
 

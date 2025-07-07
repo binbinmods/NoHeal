@@ -30,16 +30,112 @@ namespace NoHeal
         //     CardData _cardActive = null) =>
         //     //This is intentionally a stub
         //     throw new NotImplementedException("Reverse patch has not been executed.");
-        public static string ogPet;
-        public static string rarePet;
 
-        [HarmonyPrefix]
+        // [HarmonyPrefix]
+        // [HarmonyPatch(typeof(Character), nameof(Character.HealReceivedFinal))]
+
+        // public static bool HealReceivedFinalPrefix(Character __instance, ref int __result, int heal, bool isIndirect = false, CardData cardAux = null)
+        // {
+        //     if (__instance.IsHero || (PreventNPCHealing.Value && !__instance.IsHero))
+        //     {
+        //         __result = 0;
+        //         return false;
+        //     }
+        //     return true;
+        // }
+
+        [HarmonyPostfix]
         [HarmonyPatch(typeof(Character), nameof(Character.HealReceivedFinal))]
 
-        public static bool HealReceivedFinalPrefix(ref int __result, int heal, bool isIndirect = false, CardData cardAux = null)
+        public static void HealReceivedFinalPostfix(Character __instance, ref int __result, int heal, bool isIndirect = false, CardData cardAux = null)
         {
-            __result = 0;
-            return false;
+            if (IsCharacterValid(__instance))
+            {
+                __result = (SetHealToOne.Value && __result != 0) ? 1 : 0;
+                // return false;
+            }
+            // return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Character), nameof(Character.SimpleHeal))]
+
+        public static bool SimpleHealPrefix(Character __instance, ref int heal)
+        {
+            if (SetHealToOne.Value && heal != 0)
+            {
+                heal = 1;
+            }
+            if (IsCharacterValid(__instance))
+            {
+                LogDebug($"Prevented healing for {__instance.Id} with heal {heal}");
+                return false;
+            }
+            return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Character), nameof(Character.PercentHeal))]
+
+        public static bool PercentHealPrefix(Character __instance, float _healPercent, bool _includeInStats)
+        {
+            if (IsCharacterValid(__instance))
+            {
+                // __result = (SetHealToOne.Value && __result != 0) ? 1 : 0;
+                return false;
+            }
+            return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(AtOManager), nameof(AtOManager.ModifyHeroLife))]
+
+        public static bool ModifyHeroLifePrefix(AtOManager __instance, ref int _flat, ref float _percent, int _heroIndex = -1, )
+        {
+            if (DisableOutOfCombatHealing.Value && (_flat > 0 || _percent > 0.0f) && !SetHealToOne.Value)
+            {
+                // __result = (SetHealToOne.Value && __result != 0) ? 1 : 0;
+                return false;
+            }
+            // if (SetHealToOne.Value && (_flat > 0 || _percent > 0.0f))
+            // {
+            //     _flat = 1;
+            //     _percent = 0.0f;
+            // }
+            return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Character), nameof(Character.HealAttacker))]
+
+        public static bool HealAttackerPrefix(Hero theCasterHero, NPC theCasterNPC)
+        {
+            if ((theCasterHero != null || (PreventNPCHealing.Value && theCasterNPC != null)) && !SetHealToOne.Value)
+            {
+                // __result = (SetHealToOne.Value && __result != 0) ? 1 : 0;
+                return false;
+            }
+            return true;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Item), "DoItemData")]
+
+        public static void DoItemDataPrefix(
+            Character target,
+            string itemName,
+            int auxInt,
+            CardData cardItem,
+            string itemType,
+            ref ItemData itemData,
+            Character character,
+            int order,
+            string castedCardId = "",
+            Enums.EventActivation theEvent = Enums.EventActivation.None)
+        {
+            if (itemData != null && itemData.HealQuantity != 0)
+            {
+                itemData.HealQuantity = SetHealToOne.Value ? 1 : 0;
+            }
         }
 
         [HarmonyPostfix]
@@ -62,55 +158,32 @@ namespace NoHeal
                 // Sharp on Monsters reduces All Damage by 0.5 per charge
 
                 case "vitality":
-                    __result.CharacterStatModified = Enums.CharacterStat.None;
-                    __result.CharacterStatModifiedValuePerStack = 0;
+                    if (characterOfInterest.IsHero || (PreventNPCHealing.Value && !characterOfInterest.IsHero))
+                    {
+                        if (SetHealToOne.Value)
+                        {
+                            // __result.CharacterStatAbsolute = true;
+                            __result.CharacterStatModifiedValue = 1;
+                            __result.CharacterStatModifiedValuePerStack = 0;
+                        }
+                        else
+                        {
+                            __result.CharacterStatModified = Enums.CharacterStat.None;
+                            __result.CharacterStatModifiedValuePerStack = 0;
+                        }
+
+
+                    }
                     break;
             }
+
+
+
         }
-
-
-        // [HarmonyPostfix]
-        // [HarmonyPatch(typeof(Globals), nameof(Globals.CreateGameContent))]
-        // public static void CreateGameContentPostfix(ref Globals __instance, ref Dictionary<string, CardData> ____CardsSource)
-        // {
-        //     string cardToChange = "twilightslaughter";
-        //     if (____CardsSource.TryGetValue(cardToChange, out CardData twilightslaughter) && !OnlyImmortalPurples.Value)
-        //     {
-        //         LogDebug($"CreateGameContentPostfix - Preventing twilight slaughter from killing pets");
-        //         twilightslaughter.KillPet = false;
-        //         ____CardsSource[cardToChange] = twilightslaughter;
-        //     }
-        //     else
-        //     {
-        //         LogDebug($"CreateGameContentPostfix - Twilight Slaughter not found in CardsSource");
-        //     }
-        //     cardToChange = "twilightslaughtera";
-        //     if (____CardsSource.TryGetValue(cardToChange, out CardData twilightslaughtera) && !OnlyImmortalPurples.Value)
-        //     {
-        //         LogDebug($"CreateGameContentPostfix - Preventing twilight slaughter from killing pets");
-        //         twilightslaughtera.KillPet = false;
-        //         ____CardsSource[cardToChange] = twilightslaughtera;
-        //     }
-        //     {
-        //         LogDebug($"CreateGameContentPostfix - TwilightSlaughterA not found in CardsSource");
-        //     }
-        //     if (EssentialsInstalled || OnlyImmortalPurples.Value)
-        //     {
-        //         List<string> pets = Globals.Instance.CardListByType[Enums.CardType.Pet];
-        //         LogDebug($"CreateGameContent - Adding Immortal to pets - {string.Join(", ", pets)}");
-        //         foreach (string pet in pets)
-        //         {
-        //             if (pet.EndsWith("rare"))
-        //             {
-        //                 AddTextToCardDescription("Immortal", TextLocation.ItemBeforeActivation, pet);
-        //                 Globals.Instance.GetCardData(pet, false).SetDescriptionNew(true, null, true);
-        //                 // ____CardsSource[pet].DescriptionNormalized = Globals.Instance.GetCardData(pet, false).DescriptionNormalized;
-        //             }
-        //         }
-
-        //     }
-
-        // }
+        public static bool IsCharacterValid(Character __instance)
+        {
+            return __instance.IsHero || (PreventNPCHealing.Value && !__instance.IsHero);
+        }
 
     }
 

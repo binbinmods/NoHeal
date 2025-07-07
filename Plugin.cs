@@ -42,7 +42,10 @@ namespace NoHeal
         public static ConfigEntry<bool> EnableMod { get; set; }
         public static ConfigEntry<bool> EnableDebugging { get; set; }
 
-        // public static ConfigEntry<bool> OnlyImmortalPurples { get; set; }
+        public static ConfigEntry<bool> PreventNPCHealing { get; set; }
+
+        public static ConfigEntry<bool> SetHealToOne { get; set; }
+        public static ConfigEntry<bool> DisableOutOfCombatHealing { get; set; }
         public static bool EssentialsInstalled = false;
         public static string debugBase = $"{PluginInfo.PLUGIN_GUID} ";
 
@@ -57,7 +60,10 @@ namespace NoHeal
 
             EnableMod = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "EnableMod"), true, new ConfigDescription("Enables the mod. If false, the mod will not work then next time you load the game."));
             EnableDebugging = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "EnableDebugging"), true, new ConfigDescription("Enables the debugging"));
-            // OnlyImmortalPurples = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "OnlyImmortalPurples"), false, new ConfigDescription("Makes it so that only purple (corrupted) pets are immortal"));
+
+            PreventNPCHealing = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "PreventNPCHealing"), false, new ConfigDescription("Prevents the NPCs from healing too."));
+            SetHealToOne = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "SetHealToOne"), false, new ConfigDescription("Rather than making healing 0, all healing is now 0. This makes it so things that proc on heal will now work."));
+            DisableOutOfCombatHealing = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "DisableOutOfCombatHealing"), false, new ConfigDescription("Prevents you from healing out of combat. This includes from all events, beating bosses, or transitioning to new areas."));
 
             // Log.LogInfo($"{PluginInfo.PLUGIN_GUID} second test (pre-register)");
             // OnlyImmortalPurples.Value = true;
@@ -71,7 +77,7 @@ namespace NoHeal
                 RegisterMod(
                     _name: PluginInfo.PLUGIN_NAME,
                     _author: "binbin",
-                    _description: "Slaughter Prevention",
+                    _description: "Heal Prevention",
                     _version: PluginInfo.PLUGIN_VERSION,
                     _date: ModDate,
                     _link: @"https://github.com/binbinmods/NoHeal"
